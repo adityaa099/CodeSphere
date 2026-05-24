@@ -5,7 +5,6 @@ pipeline {
         DOCKER_REGISTRY = 'docker.io'
         IMAGE_PREFIX = 'codesphere'
         VERSION = "${env.BUILD_NUMBER}"
-        CI = 'true'
     }
 
     stages {
@@ -41,9 +40,9 @@ pipeline {
             steps {
                 echo '🛡️ Running Trivy security scan...'
                 bat '''
-                    docker run --rm -v "%WORKSPACE%:/apps" aquasec/trivy fs --format table --severity HIGH,CRITICAL /apps/backend
-                    docker run --rm -v "%WORKSPACE%:/apps" aquasec/trivy fs --format table --severity HIGH,CRITICAL /apps/frontend
-                    docker run --rm -v "%WORKSPACE%:/apps" aquasec/trivy fs --format table --severity HIGH,CRITICAL /apps/executor-service
+                    trivy fs --format table --severity HIGH,CRITICAL ./backend
+                    trivy fs --format table --severity HIGH,CRITICAL ./frontend
+                    trivy fs --format table --severity HIGH,CRITICAL ./executor-service
                 '''
             }
         }
@@ -64,9 +63,9 @@ pipeline {
             steps {
                 echo '🛡️ Scanning Docker images with Trivy...'
                 bat """
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-frontend:${VERSION}
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-backend:${VERSION}
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-executor:${VERSION}
+                    trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-frontend:${VERSION}
+                    trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-backend:${VERSION}
+                    trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-executor:${VERSION}
                 """
             }
         }

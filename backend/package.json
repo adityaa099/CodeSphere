@@ -9,12 +9,6 @@
     "test": "jest --coverage --forceExit --detectOpenHandles",
     "lint": "eslint src/"
   },
-  "jest": {
-    "testMatch": [
-      "**/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "**/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
-    ]
-  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
