@@ -41,9 +41,9 @@ pipeline {
             steps {
                 echo '🛡️ Running Trivy security scan...'
                 bat '''
-                    trivy fs --format table --severity HIGH,CRITICAL ./backend
-                    trivy fs --format table --severity HIGH,CRITICAL ./frontend
-                    trivy fs --format table --severity HIGH,CRITICAL ./executor-service
+                    docker run --rm -v "%WORKSPACE%:/apps" aquasec/trivy fs --format table --severity HIGH,CRITICAL /apps/backend
+                    docker run --rm -v "%WORKSPACE%:/apps" aquasec/trivy fs --format table --severity HIGH,CRITICAL /apps/frontend
+                    docker run --rm -v "%WORKSPACE%:/apps" aquasec/trivy fs --format table --severity HIGH,CRITICAL /apps/executor-service
                 '''
             }
         }
@@ -64,9 +64,9 @@ pipeline {
             steps {
                 echo '🛡️ Scanning Docker images with Trivy...'
                 bat """
-                    trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-frontend:${VERSION}
-                    trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-backend:${VERSION}
-                    trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-executor:${VERSION}
+                    docker run --rm -v //var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-frontend:${VERSION}
+                    docker run --rm -v //var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-backend:${VERSION}
+                    docker run --rm -v //var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL ${IMAGE_PREFIX}-executor:${VERSION}
                 """
             }
         }
