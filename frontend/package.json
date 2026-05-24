@@ -24,6 +24,12 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "jest": {
+    "testMatch": [
+      "**/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "**/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ]
+  },
   "browserslist": {
     "production": [
       ">0.2%",
