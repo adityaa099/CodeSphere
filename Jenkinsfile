@@ -5,6 +5,7 @@ pipeline {
         DOCKER_REGISTRY = 'docker.io'
         IMAGE_PREFIX = 'codesphere'
         VERSION = "${env.BUILD_NUMBER}"
+        CI = 'true'
     }
 
     stages {
