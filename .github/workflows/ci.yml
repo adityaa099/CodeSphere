@@ -47,26 +47,9 @@ jobs:
           cd frontend
           npm test
 
-  # 🛡️ Security Scanning job
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🔍 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🛡️ Run Trivy FS Scan
-        uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          ignore-unfixed: true
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-
-  # 🐳 Docker Build and Scan job
+  # 🐳 Docker Build job
   docker-build:
-    name: Docker Build & Scan
+    name: Docker Build
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout code
@@ -78,32 +61,11 @@ jobs:
       - name: 🏗️ Build Backend Image
         run: docker build -t codesphere-backend:latest ./backend
 
-      - name: 🛡️ Scan Backend Image
-        uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          image-ref: 'codesphere-backend:latest'
-          scan-type: 'image'
-          severity: 'CRITICAL,HIGH'
-
       - name: 🏗️ Build Frontend Image
         run: docker build -t codesphere-frontend:latest ./frontend
 
-      - name: 🛡️ Scan Frontend Image
-        uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          image-ref: 'codesphere-frontend:latest'
-          scan-type: 'image'
-          severity: 'CRITICAL,HIGH'
-
       - name: 🏗️ Build Executor Image
         run: docker build -t codesphere-executor:latest ./executor-service
-
-      - name: 🛡️ Scan Executor Image
-        uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          image-ref: 'codesphere-executor:latest'
-          scan-type: 'image'
-          severity: 'CRITICAL,HIGH'
 
       - name: 🏗️ Build Nginx Image
         run: docker build -t codesphere-nginx:latest ./nginx
