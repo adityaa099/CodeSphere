@@ -28,7 +28,7 @@ jobs:
       - name: 📦 Install Backend Dependencies
         run: |
           cd backend
-          npm ci
+          npm install --no-audit --no-fund
 
       - name: 🧪 Run Backend Tests
         run: |
@@ -38,7 +38,7 @@ jobs:
       - name: 📦 Install Frontend Dependencies
         run: |
           cd frontend
-          npm ci
+          npm install --no-audit --no-fund
 
       - name: 🧪 Run Frontend Tests
         env:
