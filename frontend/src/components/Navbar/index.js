@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { FiCode, FiLogOut, FiMenu, FiX, FiActivity, FiBookOpen } from 'react-icons/fi';
 
@@ -217,11 +217,18 @@ const MobileLogout = styled.button`
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
   const closeMobile = () => setMobileOpen(false);
+
+  const handleLogout = () => {
+    logout();
+    closeMobile();
+    navigate('/login');
+  };
 
   return (
     <Header>
@@ -255,7 +262,7 @@ export default function Navbar() {
             <UserAvatar title={user?.username}>
               {user?.username?.charAt(0).toUpperCase()}
             </UserAvatar>
-            <LogoutBtn onClick={logout} title="Logout">
+            <LogoutBtn onClick={handleLogout} title="Logout">
               <FiLogOut />
             </LogoutBtn>
           </UserMenu>
@@ -291,7 +298,7 @@ export default function Navbar() {
           </>
         )}
         {isAuthenticated ? (
-          <MobileLogout onClick={() => { logout(); closeMobile(); }}>
+          <MobileLogout onClick={handleLogout}>
             <FiLogOut /> Sign Out
           </MobileLogout>
         ) : (

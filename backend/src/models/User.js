@@ -73,14 +73,20 @@ UserSchema.methods.generateToken = function() {
   );
 };
 
-// Update stats helper
+// Update stats helper atomically to prevent race conditions during concurrent executions (e.g. multi-tab)
 UserSchema.methods.recordExecution = async function(language, executionTime) {
-  this.stats.totalExecutions += 1;
-  this.stats.totalExecutionTime += executionTime;
-  if (!this.stats.languagesUsed.includes(language)) {
-    this.stats.languagesUsed.push(language);
-  }
-  await this.save();
+  await this.model('User').updateOne(
+    { _id: this._id },
+    {
+      $inc: {
+        'stats.totalExecutions': 1,
+        'stats.totalExecutionTime': executionTime
+      },
+      $addToSet: {
+        'stats.languagesUsed': language
+      }
+    }
+  );
 };
 
 module.exports = mongoose.model('User', UserSchema);
