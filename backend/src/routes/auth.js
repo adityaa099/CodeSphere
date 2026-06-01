@@ -54,6 +54,21 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Register error:', error);
+
+    // Handle Mongoose validation errors (e.g., username too short)
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(e => e.message);
+      return res.status(400).json({ error: messages[0] });
+    }
+
+    // Handle duplicate key errors (race condition on unique fields)
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        error: field === 'email' ? 'Email already registered' : 'Username already taken'
+      });
+    }
+
     res.status(500).json({ error: 'Server error during registration' });
   }
 });
